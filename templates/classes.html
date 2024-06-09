@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Attendance
+{% endblock %}
+
+{% block main %}
+
+
+<div>
+    <form method="post" action="/class_history">
+        <select name="class_date">
+            {% for date in dates %}
+            <option value="{{ date }}">{{ date }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" name="gotoclass">Go to this class</button>
+    </form>
+</div>
+
+<h2>{{ results[0].class_date }}  </h2>
+
+
+<div>
+
+
+    <ul>
+        {% for result in results %}
+
+        <li>
+            {{ result.employee_name }} - 
+            {{ result.service_name }}
+           
+            
+        </li>
+        {% endfor %}
+    </ul>
+
+</div>
+
+{% endblock %}

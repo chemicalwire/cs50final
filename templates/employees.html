@@ -1,0 +1,111 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Employees
+{% endblock %}
+
+{% block main %}
+
+<script>
+    function showInactive(element) {
+        var makeInactiveButton = element.nextElementSibling.nextElementSibling.querySelector("button[name='make_inactive']");
+        makeInactiveButton.style.visibility = "visible";
+    }
+
+    function changeActiveStatus(element) {
+        var employeeId = element.parentNode.parentNode.querySelector("input[name='employee_id']").value;
+        var activeValue = element.checked ? 1 : 0;
+        var formData = new FormData();
+        formData.append('employee_id', employeeId);
+        formData.append('active', activeValue);
+        fetch('/update_employee', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response data if needed
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+ 
+    <div style="text-align: right;"><input name="showActive" id="showActive" type="checkbox"><label for="showActive"> Show active employees only</label></div>
+
+    <div style="text-align: left;">
+        <h1>Employees</h1>
+    </div>
+    <div></div>
+    <div> 
+        <form method="post" action="/add_employee">
+            Add Employee  -
+            Name: <input name="employee_name" type="text" required autocomplete="off">
+            Type: 
+            <select id="role" name="role" required>
+                <option value="" selected disabled hidden>Select type</option>
+                <option value ="0">Teacher</option>
+                <option value ="1">Student</option>
+            </select>
+            <button name="add">Add</button>
+        </form>
+    </div>    
+    <hr>
+    <div>
+        
+    {% if results %}        
+        <form method="post" action="/edit_employee">
+        <table  style="text-align: left;">
+            <tr>
+                <td>
+                    <button name="edit" style="visibility: hidden;">Edit</button>
+                    <button name="make_inactive">Make Inactive</button>
+                </td>
+                <td>
+                    
+                </td>
+            </tr>
+
+            
+            {% for result in results %}
+
+            <tr>
+                <td>
+                    <div class="radio-group">
+                        <input type="radio" id={{result.id}} name="employee_id" value={{result.id}}>
+                        <label for = {{result.id}}> {{ result.name }}</label>
+                    </div>
+                </td>
+                <td name="employee" id="{{result.id}}"> 
+                    {% if result.role == 0 %}
+                        Teacher
+                    {% else %}
+                        Student
+                    {% endif %}
+                    /
+                    {% if result.active == 0 %}
+                        (Inactive)
+                    {% else %}
+                        (Active)
+                    {% endif %}
+                </td>
+                <td>
+                    <input type="checkbox" name="edit" onclick="changeActiveStatus(this)" value="1" {% if result.active %} checked {% endif %}>
+
+                </td>
+                </td>
+            </tr> 
+
+            {% endfor %}
+
+        </table>
+        </form>
+    
+    {% else %}
+        <p>No employees found</p>
+    {% endif %}
+        
+    </div>
+
+{% endblock %}

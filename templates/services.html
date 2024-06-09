@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Services
+{% endblock %}
+
+{% block main %}
+
+<script>
+funcion edit_service(){
+    var service_id = document.querySelector('input[name="service_id"]:checked').value;
+    window.location.href = "/edit_service/" + service_id;
+}
+    
+</script>
+   
+    <h1 style="text-align: left;">Services</h1>
+    <div name="add_service"> 
+        <form method="post" action="/add_service">
+            Add Service - Name: <input id="service_name" name="service_name" type="text" required>
+            Type: 
+            <select id="type" name="type" required>
+                <option value="" selected disabled hidden>Select type</option>
+                <option value = 0>Teacher</option>
+                <option value = 1>Student</option>
+            </select>
+            <button name="add">Add</button>
+        </form>
+    </div>    
+    <hr>
+    
+    <div>
+        {% if results %}    
+        <table style="text-align: left;" name="services">
+            <form method="post" action="/edit_service">
+            {% for result in results %}
+                <tr id={{result.id}} name="service_row">
+                    <td>
+                        {{ result.service }}
+                        <!-- <div class="radio-group">
+                            <input type="radio" id={{result.id}} name="service_id" value={{result.id}}>
+                            <label for = {{result.id}}>{{ result.service }}</label>
+                        </div> -->
+                    </td>
+                    <td>{% if result.service_type == 0 %}
+                        Teacher
+                    {% else %}
+                        Student
+                    {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+                <!-- <tr>
+                    <td>
+
+                    </td>
+                    <td>
+                        <button name="delete" style="visibility: hidden">Delete</button>
+                        <button name="make_inactive">Make Inactive</button>   
+                    </td>
+                </tr> -->
+            </form>
+        </table>
+        {% else %}
+            <h3>No services found</h3>
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,70 @@
+CREATE TABLE employees (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    role INTEGER NOT NULL,
+    active INTEGER NOT NULL
+    )
+
+CREATE TABLE services (
+    id INTEGER PRIMARY KEY,
+    service VARCHAR(50) NOT NULL,
+    service_type INTEGER NOT NULL)
+
+CREATE TABLE classes (
+	id INTEGER NOT NULL, 
+	class_date DATE DEFAULT (date(CURRENT_TIMESTAMP)) NOT NULL, 
+	theory_topic VARCHAR, 
+	notes VARCHAR, 
+	PRIMARY KEY (id)
+)
+
+CREATE TABLE class_join (
+    id INTEGER PRIMARY KEY,
+    class_id INTEGER,
+    employee_id INTEGER,
+    service_id INTEGER,
+    FOREIGN KEY (class_id) REFERENCES class(class_id)
+    FOREIGN KEY (employee_id) REFERENCES employees(employee_id),
+    FOREIGN KEY (service_id) REFERENCES services(service_id))
+
+
+INSERT INTO services (service, service_type)
+    VALUES ("Cutting", 0)
+
+INSERT INTO employees (name, role, active)
+    VALUES ("Billy", 0, 1)
+
+INSERT INTO class (theory_topic, "notes")
+    VALUES ("Barbering", "")
+
+INSERT INTO class_join (class_id, employee_id, service_id)
+   VALUES (1,1,1)
+# --------------------------------------------
+
+SELECT * FROM class
+    ORDER BY class_date
+
+SELECT * from employees
+    ORDER BY role, name
+
+SELECT * from employees
+    WHERE active = 1
+    ORDER BY role, name
+
+SELECT * from employees
+    WHERE role= 0
+    ORDER BY name
+
+SELECT * from employees
+    WHERE role= 1
+    ORDER BY name
+
+SELECT * FROM services
+
+SELECT class_join.id, classes.id, classes.class_date, employees.id, employees.name, services.service FROM class_join
+    "JOIN classes ON classes.id = class_join.class_id
+    "JOIN employees ON employees.id = class_join.employee_id
+    "JOIN services ON services.id = class_join.service_id
+    "ORDER BY employees.role, employees.name
+
+
