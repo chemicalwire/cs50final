@@ -7,10 +7,7 @@
 {% block main %}
 
 <script>
-funcion edit_service(){
-    var service_id = document.querySelector('input[name="service_id"]:checked').value;
-    window.location.href = "/edit_service/" + service_id;
-}
+
     
 </script>
    
@@ -24,7 +21,7 @@ funcion edit_service(){
                 <option value = 0>Teacher</option>
                 <option value = 1>Student</option>
             </select>
-            <button name="add">Add</button>
+            <input type="submit" name="add" value="Add Service" style="border-radius: 10%; background-color: lightblue; border: none;">
         </form>
     </div>    
     <hr>

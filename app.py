@@ -290,13 +290,16 @@ def class_add():
 def delete_entry():
 
     class_join_id = request.form.get("class_join_id")
-    print(class_join_id)
+    class_date = request.form.get("class_date")
+    print("Class date: ", class_date)
+    print("Join ID:", class_join_id)
+
     stmt = text("DELETE FROM class_join WHERE id = :class_join_id")
     data = {"class_join_id": class_join_id}
     with engine.begin() as connection:
         connection.execute(stmt, data)
-    
-    
+
+    return redirect(f"/class_edit?date={class_date}") 
     return redirect("/class_edit") 
 
 @app.route("/employees", methods=["GET"])

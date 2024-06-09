@@ -6,9 +6,10 @@
 
 {% block main %}
 <script>
-    function deleteClassEntry(class_join_id) {
+    function deleteClassEntry(class_join_id, class_date) {
         
         console.log(class_join_id);
+        console.log(class_date);
         if (confirm("Are you sure you want to delete this class?"))
         {
             
@@ -20,6 +21,13 @@
             input.name = "class_join_id";
             input.value = class_join_id;
             form.appendChild(input);
+            var input2 = document.createElement("input");
+            input2.type = "hidden";
+            input2.name = "class_date";
+            
+            input2.value = class_date;
+            form.appendChild(input2);
+
             document.body.appendChild(form);
             form.submit();
         }
@@ -141,7 +149,7 @@
                     {{ class.employee_name }} - 
                     {{ class.service_name }}
                 </td>
-                <td><input type="button" name="delete{{class.class_join_id}}" id="{{class.class_join_id}}" value="Delete" style="border-radius: 10%; background-color: lightblue; border: none;" onclick="deleteClassEntry({{class.class_join_id}})"></td>
+                <td><input type="button" name="delete{{class.class_join_id}}" id="{{class.class_join_id}}" value="Delete" style="border-radius: 10%; background-color: lightblue; border: none;" onclick="deleteClassEntry({{class.class_join_id}}, '{{date[0].date}}')"></td>
             </tr>
             </tr>
             </tr>
@@ -167,7 +175,8 @@
                     <td>
                         <input type="hidden" name="class_id" value="{{classID}}">
                         <input type="hidden" name="class_date" value="{{date[0].date}}">
-                        <button type="submit" name="update">Update</button>
+                        <!-- <button type="submit" name="update">Update</button> -->
+                        <input type="submit" name="update" value="Update" style="border-radius: 10%; background-color: lightblue; border: none;">
                     </td>
                 </tr>
             </table>
