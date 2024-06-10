@@ -1,11 +1,11 @@
 # from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text, select, Update
+from sqlalchemy import text, select, update
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import Base, Employees, Classes, Services, Class_join, engine
-from helpers import apology
+from helpers import apology, login_required
 import os
 from datetime import date
 
@@ -37,8 +37,9 @@ def after_request(response):
     return response
 
 @app.route("/", methods=["GET", "POST"])
-# @login_required
+#@login_required
 def index():
+
 
     return render_template("./index.html")
     # if a class exists with todays date, then display that class
@@ -133,10 +134,12 @@ def class_edit():
             stmt = text("SELECT id from classes WHERE class_date = :date")
             with engine.connect() as connection:
                 class_id = connection.execute(stmt, cDate).fetchone()
-                classID = class_id[0]
-
-            # get class data
-            stmt = text("SELECT class_join.id, classes.id, classes.class_date, employees.id, employees.name, services.service, classes.theory_topic, classes.notes FROM class_join " \
+                classID = class_id
+            # get class data for specified date
+            stmt = text("SELECT class_join.id AS class_join_id, classes.id, " \
+            "classes.class_date, employees.id, employees.name AS employee_name, " \
+            "services.service AS service_name, classes.theory_topic AS theory_topic, "\
+            "classes.notes AS notes FROM class_join " \
             "JOIN classes ON classes.id = class_join.class_id " \
             "JOIN employees ON employees.id = class_join.employee_id " \
             "JOIN services ON services.id = class_join.service_id " \
@@ -144,34 +147,25 @@ def class_edit():
             "ORDER BY employees.role, employees.name")
             
             with engine.connect() as connection:
-                classes = []
-                for row in connection.execute(stmt, cDate):
-                    result_dict = {
-                        'class_join_id': row[0],
-                        'class_id': row[1],
-                        'class_date': row[2],
-                        'employee_name': row[4],
-                        'service_name': row[5],
-                        'theory_topic': row[6],
-                        'notes': row[7] 
-                    }
-                    classes.append(result_dict)
+                classes = connection.execute(stmt, cDate).fetchall()
 
         return render_template("/class_edit.html",  classID=classID, dates=dates, date=cDate, teachers=teachers, students=students, teacher_services=teacher_services, student_services=student_services, classes=classes)
 
 @app.route("/class_update", methods=["POST"])
 def class_update():
     '''updates the theory and notes for a class'''
+
     #get data from the form
     class_id = request.form.get("class_id")
     class_date = request.form.get("class_date")
     theory = request.form.get("theory_topic")
     notes = request.form.get("notes")  
-    print(class_id, class_date, theory, notes)
-    stmt = text("UPDATE classes SET theory_topic = :theory, notes = :notes WHERE id = :class_id")
-    data = {"theory": theory, "notes": notes, "class_id": class_id} 
+
+    #stmt = text("UPDATE classes SET theory_topic = :theory, notes = :notes WHERE id = :class_id")
+    stmt = update(Classes).where(Classes.id == class_id).values(theory_topic = theory, notes = notes)
+    #data = {"theory": theory, "notes": notes, "class_id": class_id} 
     with engine.begin() as connection:
-        connection.execute(stmt, data)
+        connection.execute(stmt)
 
     return redirect(f"/class_edit?date=" + class_date)
 
@@ -225,23 +219,16 @@ def employees():
     
     if request.method == "GET":
         stmt= select(Employees).order_by(Employees.role, Employees.name)    
-        results = []
         with engine.connect() as connection:
-            for row in connection.execute(stmt):
-                result_dict = {
-                    'id': row[0],
-                    'name': row[1],
-                    'role': row[2],
-                    'active': row[3]
-                }
-                results.append(result_dict)
+            results= connection.execute(stmt).fetchall()
+
         active_status = '0'
     else:
         active_status = request.form.get("active_status")
         if active_status == "1":
             stmt = select(Employees).where(Employees.active == active_status).order_by(Employees.active.desc(), Employees.role, Employees.name)
         else:
-            stmt = select(Employees).order_by(Employees.active.desc(), Employees.role, Employees.name)
+            stmt = select(Employees).order_by(Employees.role, Employees.name)
         results = []
         with engine.connect() as connection:
             for row in connection.execute(stmt):
@@ -309,15 +296,10 @@ def change_active_status():
 def get_services():
     '''display a list of services'''
     stmt = text("SELECT * from services ORDER BY service_type, service")
+   
+   
     with engine.connect() as connection:
-        results = []
-        for row in connection.execute(stmt):
-            result_dict = {
-                'id': row[0],
-                'service': row[1],
-                'service_type': row[2]
-            }
-            results.append(result_dict)
+        results = connection.execute(stmt).fetchall()
     
     return render_template("./services.html", results=results)
 

@@ -69,19 +69,8 @@
     {% if results %}        
         <form method="post" action="/edit_employee">
         <table  style="text-align: left;">
-            <!-- <tr>
-                <td>
-                    <button name="edit" style="visibility: hidden;">Edit</button>
-                    <button name="make_inactive">Make Inactive</button>
-                </td>
-                <td>
-                    
-                </td> -->
-            </tr>
 
-            
             {% for result in results %}
-
             <tr>
                 <td>
                     {{ result.name }}
@@ -92,29 +81,19 @@
                     {% else %}
                         Student
                     {% endif %}
-                    <!-- /
-                    {% if result.active == 0 %}
-                        (Inactive)
-                    {% else %}
-                        (Active)
-                    {% endif %} -->
                 </td>
                 <td>
                     <input type="checkbox" name="edit" onclick="changeActiveStatus(this, {{result.id}})" value="1" {% if result.active %} checked {% endif %}>
 
                 </td>
-                </td>
             </tr> 
-
             {% endfor %}
-
         </table>
         </form>
     
     {% else %}
         <p>No employees found</p>
-    {% endif %}
-        
+    {% endif %}     
     </div>
 
 {% endblock %}

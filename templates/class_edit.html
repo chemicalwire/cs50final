@@ -39,7 +39,7 @@
     <form method="get" action="/class_edit">
         Select Class Date - 
         <select name="date" onchange="this.form.submit()">
-            <option value="" selected disabled hidden>Date</option>
+            <option value="" selected disabled hidden>{{date[0].date}}</option>
             {% for date in dates %}
             <option value="{{ date.date }}">{{ date.date }}</option>
             {% endfor %}
@@ -54,7 +54,7 @@
 <div>
     <form method="post" action="/class_edit">
         <input type="hidden" name="class_date" value="{{date[0].date}}">
-        <input type="hidden" name="class_id" value="{{classID}}">
+        <input type="hidden" name="class_id" value="{{classID.id}}">
 
         <select name="employee" id="employeeDropdown" required>
             <option value="" selected disabled hidden>Select Teacher</option>
