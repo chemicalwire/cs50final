@@ -2,7 +2,7 @@
 # from sqlalchemy.orm import sessionmaker, DeclarativeBase, MappedAsDataclass
 # from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text, select
+from sqlalchemy import text, select, Update
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -288,6 +288,7 @@ def class_add():
 
 @app.route("/delete_entry", methods=["POST"])
 def delete_entry():
+    '''deletes a student from class'''
 
     class_join_id = request.form.get("class_join_id")
     class_date = request.form.get("class_date")
@@ -305,8 +306,9 @@ def delete_entry():
 @app.route("/employees", methods=["GET"])
 #@login_required
 def employees():
-
-    stmt = text("SELECT * from employees ORDER BY role, name")
+    '''display a list of employees'''
+    
+    stmt = text("SELECT * from employees ORDER BY active DESC, role, name")
     with engine.connect() as connection:
         #results = connection.execute(stmt)
         results = []
@@ -355,17 +357,28 @@ def add_employee():
     
     return redirect("/employees")
 
-@app.route("/edit_employee", methods=["GET", "POST"])
-def edit_employee():
-    # if request.method == "POST":
-    employeeID = request.form.get("employee_id")
-    print(employeeID)
-    if employeeID == "":
-        return apology("Please select an employee to edit") 
-    stmt = text("UPDATE employees SET active = 0 WHERE id = :employeeID")
-    data = {"employeeID": employeeID}
+@app.route("/change_active_status", methods=["GET", "POST", "FETCH"])
+def change_active_status():
+    '''make employee inactive, need to add a way to reactivate them'''
+    ''' can i just make this a fetch request?'''
+    employeeID = request.form.get("employeeID")
+    active_status = request.form.get("active_status")
+    print(employeeID, active_status)
+
+    stmt = Update(Employees).where(Employees.id == employeeID).values(active = active_status)
     with engine.begin() as connection:
-        connection.execute(stmt, data)
+        connection.execute(stmt)
+
+    # print(stmt)
+    # # if request.method == "POST":
+    # employeeID = request.form.get("employee_id")
+    # print(employeeID)
+    # if employeeID == "":
+    #     return apology("Please select an employee to edit") 
+    # stmt = text("UPDATE employees SET active = 0 WHERE id = :employeeID")
+    # data = {"employeeID": employeeID}
+    # with engine.begin() as connection:
+    #     connection.execute(stmt, data)
 
     
     return redirect("/employees")

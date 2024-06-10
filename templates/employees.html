@@ -7,28 +7,64 @@
 {% block main %}
 
 <script>
-    function showInactive(element) {
-        var makeInactiveButton = element.nextElementSibling.nextElementSibling.querySelector("button[name='make_inactive']");
-        makeInactiveButton.style.visibility = "visible";
+    function showInactive(employeeID) {
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "/change_active_status";
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "employeeID";
+        input.value = class_join_id;
+        form.appendChild(input);
+        var input2 = document.createElement("input");
+        input2.type = "hidden";
+        input2.name = "active_status";
+        
+        input2.value = class_date;
+        form.appendChild(input2);
+
+        document.body.appendChild(form);
+        form.submit();
     }
 
-    function changeActiveStatus(element) {
-        var employeeId = element.parentNode.parentNode.querySelector("input[name='employee_id']").value;
-        var activeValue = element.checked ? 1 : 0;
-        var formData = new FormData();
-        formData.append('employee_id', employeeId);
-        formData.append('active', activeValue);
-        fetch('/update_employee', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Handle the response data if needed
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    function changeActiveStatus(element, employeeID) {
+        //var employeeId = element.parentNode.parentNode.querySelector("input[name='employee_id']").value;
+        console.log(employeeID)
+        var active_status = element.checked ? 1 : 0;
+        console.log(active_status)
+
+        var form = document.createElement("form");
+        form.method = "post";
+        form.action = "/change_active_status";
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "employeeID";
+        input.value = employeeID;
+        form.appendChild(input);
+        var input2 = document.createElement("input");
+        input2.type = "hidden";
+        input2.name = "active_status";
+        input2.value = active_status;
+        form.appendChild(input2);
+
+        document.body.appendChild(form);
+        form.submit();
+        // var formData = new FormData();
+        // formData.append('employee_id', employeeID);
+        // formData.append('active', activeValue);
+
+
+        // fetch('/update_employee', {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        // .then(response => response.json())
+        // .then(data => {
+        //     // Handle the response data if needed
+        // })
+        // .catch(error => {
+        //     console.error('Error:', error);
+        // });
     }
 </script>
  
@@ -57,14 +93,14 @@
     {% if results %}        
         <form method="post" action="/edit_employee">
         <table  style="text-align: left;">
-            <tr>
+            <!-- <tr>
                 <td>
                     <button name="edit" style="visibility: hidden;">Edit</button>
                     <button name="make_inactive">Make Inactive</button>
                 </td>
                 <td>
                     
-                </td>
+                </td> -->
             </tr>
 
             
@@ -72,10 +108,7 @@
 
             <tr>
                 <td>
-                    <div class="radio-group">
-                        <input type="radio" id={{result.id}} name="employee_id" value={{result.id}}>
-                        <label for = {{result.id}}> {{ result.name }}</label>
-                    </div>
+                    {{ result.name }}
                 </td>
                 <td name="employee" id="{{result.id}}"> 
                     {% if result.role == 0 %}
@@ -83,15 +116,15 @@
                     {% else %}
                         Student
                     {% endif %}
-                    /
+                    <!-- /
                     {% if result.active == 0 %}
                         (Inactive)
                     {% else %}
                         (Active)
-                    {% endif %}
+                    {% endif %} -->
                 </td>
                 <td>
-                    <input type="checkbox" name="edit" onclick="changeActiveStatus(this)" value="1" {% if result.active %} checked {% endif %}>
+                    <input type="checkbox" name="edit" onclick="changeActiveStatus(this, {{result.id}})" value="1" {% if result.active %} checked {% endif %}>
 
                 </td>
                 </td>
