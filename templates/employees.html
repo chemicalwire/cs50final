@@ -7,32 +7,23 @@
 {% block main %}
 
 <script>
-    function showInactive(employeeID) {
+    function toggle_active(element) {
+        var active_status = element.checked ? 1 : 0;
+        console.log(active_status);
         var form = document.createElement("form");
         form.method = "post";
-        form.action = "/change_active_status";
+        form.action = "/employees";
         var input = document.createElement("input");
         input.type = "hidden";
-        input.name = "employeeID";
-        input.value = class_join_id;
+        input.name = "active_status";
+        input.value = active_status;
         form.appendChild(input);
-        var input2 = document.createElement("input");
-        input2.type = "hidden";
-        input2.name = "active_status";
-        
-        input2.value = class_date;
-        form.appendChild(input2);
-
         document.body.appendChild(form);
         form.submit();
     }
 
     function changeActiveStatus(element, employeeID) {
-        //var employeeId = element.parentNode.parentNode.querySelector("input[name='employee_id']").value;
-        console.log(employeeID)
         var active_status = element.checked ? 1 : 0;
-        console.log(active_status)
-
         var form = document.createElement("form");
         form.method = "post";
         form.action = "/change_active_status";
@@ -46,29 +37,14 @@
         input2.name = "active_status";
         input2.value = active_status;
         form.appendChild(input2);
-
         document.body.appendChild(form);
         form.submit();
-        // var formData = new FormData();
-        // formData.append('employee_id', employeeID);
-        // formData.append('active', activeValue);
-
-
-        // fetch('/update_employee', {
-        //     method: 'POST',
-        //     body: formData
-        // })
-        // .then(response => response.json())
-        // .then(data => {
-        //     // Handle the response data if needed
-        // })
-        // .catch(error => {
-        //     console.error('Error:', error);
-        // });
     }
 </script>
  
-    <div style="text-align: right;"><input name="showActive" id="showActive" type="checkbox"><label for="showActive"> Show active employees only</label></div>
+    <div style="text-align: right;">
+        <input name="showActive" id="showActive" type="checkbox" onclick="toggle_active(this)" {% if active == '1' %}checked{% endif %}>
+        <label for="showActive"> Show active employees only</label></div>
 
     <div style="text-align: left;">
         <h1>Employees</h1>

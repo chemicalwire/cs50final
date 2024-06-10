@@ -98,26 +98,28 @@ def populate_database():
     with engine.begin() as connection:
         connection.execute(stmt)
 
-def populate_database():
-    inserts = [
-        {"service": "Theory", "service_type": 0},
-        {"service": "Blowdry/Up-do", "service_type": 1},
-        {"service": "Cut and Style", "service_type": 1},
-        {"service": "Barbering", "service_type": 1},
-        {"service": "Haircutting", "service_type": 0},
-        {"service": "Single Process", "service_type": 1},
-        {"service": "Color", "service_type": 0},
-        {"service": "Highlights", "service_type": 1},
-        {"service": "Balayage", "service_type": 1},
-        {"service": "Mannequin", "service_type": 1},
-        {"service": "Absent", "service_type": 1},
-        {"service": "Excused", "service_type": 1},
-        {"service": "Creative Color", "service_type": 1},
-        {"service": "Haircutting Shadow", "service_type": 0},
-        {"service": "Color Shadow", "service_type": 0},
-        {"service": "Styling", "service_type": 0}
-    ]
+# def populate_database():
+#     ''' add in  services'''
 
-    user_insert = insert(Services)
-    with engine.begin() as connection:
-        connection.execute(user_insert, inserts)
+#     inserts = [
+#         {"service": "Theory", "service_type": 0},
+#         {"service": "Blowdry/Up-do", "service_type": 1},
+#         {"service": "Cut and Style", "service_type": 1},
+#         {"service": "Barbering", "service_type": 1},
+#         {"service": "Haircutting", "service_type": 0},
+#         {"service": "Single Process", "service_type": 1},
+#         {"service": "Color", "service_type": 0},
+#         {"service": "Highlights", "service_type": 1},
+#         {"service": "Balayage", "service_type": 1},
+#         {"service": "Mannequin", "service_type": 1},
+#         {"service": "Absent", "service_type": 1},
+#         {"service": "Excused", "service_type": 1},
+#         {"service": "Creative Color", "service_type": 1},
+#         {"service": "Haircutting Shadow", "service_type": 0},
+#         {"service": "Color Shadow", "service_type": 0},
+#         {"service": "Styling", "service_type": 0}
+#     ]
+
+#     user_insert = insert(Services)
+#     with engine.begin() as connection:
+#         connection.execute(user_insert, inserts)
