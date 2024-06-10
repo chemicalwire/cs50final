@@ -6,10 +6,8 @@ from datetime import date
 from typing import Optional
 
 
-
 class Base(MappedAsDataclass, DeclarativeBase):
     pass
-
 
 class Employees(Base):
     __tablename__ = "employees"
@@ -19,8 +17,8 @@ class Employees(Base):
     active: Mapped[int]
     class_joins = relationship("Class_join", back_populates="employees")
 
-    def __repr__(self):
-        return f"{{'id': {self.id}, 'name': {self.name}, 'role': {self.role}, 'active': {self.active}}}"
+    # def __repr__(self):
+    #     return f"{{'id': {self.id}, 'name': {self.name}, 'role': {self.role}, 'active': {self.active}}}"
 
 class Services(Base):
     __tablename__ = "services"
@@ -29,8 +27,8 @@ class Services(Base):
     service_type: Mapped[int]
     class_joins = relationship("Class_join", back_populates="services")
 
-    def __repr__(self):
-        return f"{{'id': {self.id}, 'service': {self.service}, 'service_type': {self.service_type}}}"
+    # def __repr__(self):
+    #     return f"{{'id': {self.id}, 'service': {self.service}, 'service_type': {self.service_type}}}"
 
 class Classes(Base):
     __tablename__ = "classes"
@@ -40,8 +38,8 @@ class Classes(Base):
     notes: Mapped[Optional[str]]
     class_joins = relationship("Class_join", back_populates="classes")
 
-    def __repr__(self):
-        return f"{{'id': {self.id}, 'class_date': {self.class_date}, 'theory_topic': {self.theory_topic}, 'notes': {self.notes}}}"
+    # def __repr__(self):
+    #     return f"{{'id': {self.id}, 'class_date': {self.class_date}, 'theory_topic': {self.theory_topic}, 'notes': {self.notes}}}"
 
 
 class Class_join(Base):
@@ -54,8 +52,8 @@ class Class_join(Base):
     employees: Mapped[list["Employees"]] = relationship("Employees", back_populates="class_joins")
     services: Mapped[list["Services"]] = relationship("Services", back_populates="class_joins")
 
-    def __repr__(self):
-        return f"{{'id': {self.id}, 'class_id': {self.class_id}, 'employee_id': {self.employee_id}, 'service_id': {self.service_id}}}"
+    # def __repr__(self):
+    #     return f"{{'id': {self.id}, 'class_id': {self.class_id}, 'employee_id': {self.employee_id}, 'service_id': {self.service_id}}}"
 
 
 engine = create_engine("sqlite:///attendance.db")

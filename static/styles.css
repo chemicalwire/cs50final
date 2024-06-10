@@ -1,3 +1,9 @@
+input[type="submit"], input[type="button"] {
+    border-radius: 10%;
+    background-color: lightblue;
+    border: none;
+}
+
 body {
     background-color: gray;
 }

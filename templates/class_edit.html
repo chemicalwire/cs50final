@@ -32,40 +32,6 @@
             form.submit();
         }
     }
-
-    // function populateDropdowns(roleType) {
-    //     var employeeDropdown = document.getElementById("employeeDropdown");
-    //     var servicesDropdown = document.getElementById("servicesDropdown");
-    //     employeeDropdown.innerHTML = "";
-    //     servicesDropdown.innerHTML = "";
-    //     if (roleType === "teacher") {
-    //         {% for teacher in teachers %}
-    //             var option = document.createElement("option");
-    //             option.value = "{{ teacher.id }}";
-    //             option.text = "{{ teacher.name }}";
-    //             employeeDropdown.appendChild(option);
-    //         {% endfor %}
-    //         {% for service in teacher_services %}
-    //             var option = document.createElement("option");
-    //             option.value = "{{ service.id }}";
-    //             option.text = "{{ service.service }}";
-    //             servicesDropdown.appendChild(option);
-    //         {% endfor %}
-    //     } else if (roleType === "student") {
-    //         {% for student in students %}
-    //             var option = document.createElement("option");
-    //             option.value = "{{ student.id }}";
-    //             option.text = "{{ student.name }}";
-    //             employeeDropdown.appendChild(option);
-    //         {% endfor %}
-    //         {% for service in student_services %}
-    //             var option = document.createElement("option");
-    //             option.value = "{{ service.id }}";
-    //             option.text = "{{ service.service }}";
-    //         servicesDropdown.appendChild(option);
-    //         {% endfor %}
-    //     }
-    // }
 </script>
 {% if date %}
 
@@ -79,7 +45,7 @@
             {% endfor %}
         </select>
         </select>
-        <!-- <button type="submit" hidden>Go to this class</button> -->
+
     </form>
 </div>
 
@@ -89,18 +55,7 @@
     <form method="post" action="/class_edit">
         <input type="hidden" name="class_date" value="{{date[0].date}}">
         <input type="hidden" name="class_id" value="{{classID}}">
-        <!-- <select name="role_type" onchange="populateDropdowns(this.value)" required>
-            <option value="" selected disabled hidden>Select Role</option>
-            <option value="teacher">Teacher</option>
-            <option value="student">Student</option>
-        </select>
-        <select name="employee" id="employeeDropdown" required>
-            <option value="" selected disabled hidden>Select Employee</option>
-        </select>
-        <select name="services" id="servicesDropdown" required>
-            <option value="" selected disabled hidden>Select class role</option>
-        </select> -->
-        <!-- <button type="submit" name="add_teacher">Add</button>    -->
+
         <select name="employee" id="employeeDropdown" required>
             <option value="" selected disabled hidden>Select Teacher</option>
             {% for teacher in teachers %}
@@ -113,7 +68,7 @@
                 <option value="{{ service.id }}">{{ service.service }}</option>
             {% endfor %}
         </select>
-        <input type="submit" name="add_employee" value="Add Teacher" style="border-radius: 10%; background-color: lightblue; border: none;">
+        <input type="submit" name="add_employee" value="Add Teacher">
         <p></p>
     </form>
     <form method="post" action="/class_edit">
@@ -131,7 +86,7 @@
                 <option value="{{ service.id }}">{{ service.service }}</option>
             {% endfor %}
         </select>
-        <input type="submit" name="add_employee" value="Add Student" style="border-radius: 10%; background-color: lightblue; border: none;">
+        <input type="submit" name="add_employee" value="Add Student">
         <p></p>
     </form>
 
@@ -149,7 +104,7 @@
                     {{ class.employee_name }} - 
                     {{ class.service_name }}
                 </td>
-                <td><input type="button" name="delete{{class.class_join_id}}" id="{{class.class_join_id}}" value="Delete" style="border-radius: 10%; background-color: lightblue; border: none;" onclick="deleteClassEntry({{class.class_join_id}}, '{{date[0].date}}')"></td>
+                <td><input type="button" name="delete{{class.class_join_id}}" id="{{class.class_join_id}}" value="Delete" onclick="deleteClassEntry({{class.class_join_id}}, '{{date[0].date}}')"></td>
             </tr>
             </tr>
             </tr>
