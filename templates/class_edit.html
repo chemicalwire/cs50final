@@ -73,7 +73,7 @@
     </form>
     <form method="post" action="/class_edit">
         <input type="hidden" name="class_date" value="{{date[0].date}}">
-        <input type="hidden" name="class_id" value="{{classID}}">
+        <input type="hidden" name="class_id" value="{{classID.id}}">
         <select name="employee" id="employeeDropdown" required>
             <option value="" selected disabled hidden>Select Student</option>
             {% for student in students %}

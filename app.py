@@ -1,6 +1,6 @@
 # from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text, select, update
+from sqlalchemy import text, select, update, insert, delete
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -55,32 +55,30 @@ def class_edit():
         teacher = request.form.get("employee")   
         service = request.form.get("services")
         class_id = request.form.get("class_id")
+      
         print(date, class_id, teacher, service)
-        stmt = text("INSERT INTO class_join (class_id, employee_id, service_id) VALUES (:class_id, :teacher_id, :service_id)")
-        data = {"class_id": class_id, "teacher_id": teacher, "service_id": service}
+        stmt = insert(Class_join).values(class_id = class_id, employee_id = teacher, service_id = service)  
         with engine.begin() as connection:
-            connection.execute(stmt, data)
+            connection.execute(stmt)
 
         return redirect(f"/class_edit?date={date}")
     else:
-        stmt = text("SELECT * from classes")
-        # with engine.connect() as connection:
-        #     print("FUCK:", connection.execute(stmt).all())
-        #         #return apology("No classes found")
-        
+
         #   preload all the relevant data 
-        stmt = text("SELECT class_date FROM classes ORDER BY class_date DESC")
-        
+############################
+# This while date thing can be simplified by not making it a list for no reason
+############################
+
+        stmt = select(Classes.class_date).order_by(Classes.class_date.desc())
         with engine.begin() as connection:
             dates = []
             for row in connection.execute(stmt):
-                
                 dates_dict = {
                     'date': row[0]
                 }
                 dates.append(dates_dict)
             if not dates:
-                    return apology("There are no existing classes")
+                    return apology("There are no existing classes")                        
         cDate=[]
         if request.args.get("date") is not None:
             cDate.append ({"date": request.args.get("date")})
@@ -88,66 +86,41 @@ def class_edit():
             cDate.append(dates[0])
 
         #get services
-        stmt = text("SELECT * from services WHERE service_type = 0 ORDER BY service")
+        stmt = select(Services).where(Services.service_type == 0).order_by(Services.service)
         with engine.connect()  as connection:
-            teacher_services = []
-            for row in connection.execute(stmt):
-                services_dict = { 
-                    'id': row[0],
-                    'service': row[1]
-                }
-                teacher_services.append(services_dict)  
+            teacher_services = connection.execute(stmt).fetchall()
 
-        stmt = text("SELECT * from services WHERE service_type = 1 ORDER BY service")
-        with engine.connect()  as connection:
-            student_services = []
-            for row in connection.execute(stmt):
-                services_dict = { 
-                    'id': row[0],
-                    'service': row[1]                    
-                }
-                student_services.append(services_dict)  
+        stmt = select(Services).where(Services.service_type == 1).order_by(Services.service)
+        with engine.connect()  as connection:       
+            student_services = connection.execute(stmt).fetchall()
 
-        #get teachers 
-        stmt = text("SELECT * from employees WHERE role = 0 AND active = 1 ORDER BY name")
+        #get teachers and students
+        stmt = select(Employees).where(Employees.role == 0).order_by(Employees.name)
         with engine.connect() as connection:
-            teachers = []
-            for row in connection.execute(stmt).fetchall():
-                teacher_dict = {
-                    'id': row[0],
-                    'name': row[1]
-                }
-                teachers.append(teacher_dict)
-                
-        #get students
-        stmt = text("SELECT * from employees WHERE role = 1 AND active = 1 ORDER BY name")
+            teachers = connection.execute(stmt).fetchall()
+        stmt = select(Employees).where(Employees.role == 1).order_by(Employees.name)
         with engine.connect() as connection:
-            students = []
-            for row in connection.execute(stmt).fetchall():
-                teacher_dict = {
-                    'id': row[0],
-                    'name': row[1]
-                }
-                students.append(teacher_dict)
+            students = connection.execute(stmt).fetchall()
             
-            #get class_id
-            stmt = text("SELECT id from classes WHERE class_date = :date")
-            with engine.connect() as connection:
-                class_id = connection.execute(stmt, cDate).fetchone()
-                classID = class_id
-            # get class data for specified date
-            stmt = text("SELECT class_join.id AS class_join_id, classes.id, " \
-            "classes.class_date, employees.id, employees.name AS employee_name, " \
-            "services.service AS service_name, classes.theory_topic AS theory_topic, "\
-            "classes.notes AS notes FROM class_join " \
-            "JOIN classes ON classes.id = class_join.class_id " \
-            "JOIN employees ON employees.id = class_join.employee_id " \
-            "JOIN services ON services.id = class_join.service_id " \
-            "WHERE classes.class_date = :date " \
-            "ORDER BY employees.role, employees.name")
-            
-            with engine.connect() as connection:
-                classes = connection.execute(stmt, cDate).fetchall()
+        #get class_id
+        stmt = text("SELECT id from classes WHERE class_date = :date")
+        
+        with engine.connect() as connection:
+            classID = connection.execute(stmt, cDate).fetchone()
+
+        # get class data for specified class - I tried to write this using ORM and it was just ridiculous
+
+        stmt = text("SELECT class_join.id AS class_join_id, classes.id, " \
+        "classes.class_date, employees.id, employees.name AS employee_name, " \
+        "services.service AS service_name, classes.theory_topic AS theory_topic, "\
+        "classes.notes AS notes FROM class_join " \
+        "JOIN classes ON classes.id = class_join.class_id " \
+        "JOIN employees ON employees.id = class_join.employee_id " \
+        "JOIN services ON services.id = class_join.service_id " \
+        "WHERE classes.class_date = :date " \
+        "ORDER BY employees.role, employees.name")      
+        with engine.connect() as connection:
+            classes = connection.execute(stmt, cDate).fetchall()
 
         return render_template("/class_edit.html",  classID=classID, dates=dates, date=cDate, teachers=teachers, students=students, teacher_services=teacher_services, student_services=student_services, classes=classes)
 
@@ -160,10 +133,7 @@ def class_update():
     class_date = request.form.get("class_date")
     theory = request.form.get("theory_topic")
     notes = request.form.get("notes")  
-
-    #stmt = text("UPDATE classes SET theory_topic = :theory, notes = :notes WHERE id = :class_id")
     stmt = update(Classes).where(Classes.id == class_id).values(theory_topic = theory, notes = notes)
-    #data = {"theory": theory, "notes": notes, "class_id": class_id} 
     with engine.begin() as connection:
         connection.execute(stmt)
 
@@ -178,20 +148,18 @@ def class_add():
     tDate = today.strftime("%Y-%m-%d")
 
     #check to see if a class already exists for today
-    stmt = text("SELECT * from classes WHERE class_date = :date")
-    data = {"date": tDate}
+    stmt = select(Classes).where(Classes.class_date == tDate)
     with engine.connect() as connection:
-        result = connection.execute(stmt, data).all()   
+        result = connection.execute(stmt).all()   
     print("DATE: ", tDate)
     print("RESULT: ", result)
     if not (result == []):
         return apology("Class already exists for today")
     
     #if it doesn't exist, create a new class
-    stmt = text("INSERT INTO classes (class_date, theory_topic, notes) VALUES (:class_date, :theory_topic, :notes)")
-    data = {"class_date": tDate, "theory_topic": "", "notes": ""}
+    stmt = insert(Classes).values(class_date = tDate, theory_topic = "", notes = "")
     with engine.begin() as connection:
-        connection.execute(stmt, data)    
+        connection.execute(stmt)    
 
     return redirect(f"/class_edit")
 
@@ -204,10 +172,11 @@ def delete_entry():
     print("Class date: ", class_date)
     print("Join ID:", class_join_id)
 
-    stmt = text("DELETE FROM class_join WHERE id = :class_join_id")
-    data = {"class_join_id": class_join_id}
+    # stmt = text("DELETE FROM class_join WHERE id = :class_join_id")
+    # data = {"class_join_id": class_join_id}
+    stmt = delete(Class_join).where(Class_join.id == class_join_id)
     with engine.begin() as connection:
-        connection.execute(stmt, data)
+        connection.execute(stmt)
 
     return redirect(f"/class_edit?date={class_date}") 
     return redirect("/class_edit") 
@@ -295,9 +264,7 @@ def change_active_status():
 @app.route("/services")
 def get_services():
     '''display a list of services'''
-    stmt = text("SELECT * from services ORDER BY service_type, service")
-   
-   
+    stmt = select(Services).order_by(Services.service_type, Services.service)   
     with engine.connect() as connection:
         results = connection.execute(stmt).fetchall()
     
