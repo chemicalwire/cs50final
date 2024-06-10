@@ -69,7 +69,17 @@
     {% if results %}        
         <form method="post" action="/edit_employee">
         <table  style="text-align: left;">
-
+            <tr style="text-decoration: underline; font-weight: bold;">
+                <td>
+                    Name
+                </td>
+                <td>
+                    Role
+                </td>
+                <td>
+                    Active
+                </td>
+            </tr>
             {% for result in results %}
             <tr>
                 <td>

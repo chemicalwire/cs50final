@@ -56,7 +56,7 @@ def class_edit():
         service = request.form.get("services")
         class_id = request.form.get("class_id")
       
-        print(date, class_id, teacher, service)
+        print(date, employee, service, class_id)
         stmt = insert(Class_join).values(class_id = class_id, employee_id = teacher, service_id = service)  
         with engine.begin() as connection:
             connection.execute(stmt)
@@ -69,27 +69,31 @@ def class_edit():
 # This while date thing can be simplified by not making it a list for no reason
 ############################
 
+        ###########
+        # return dates as a tuple
+        # make cDate a string file and then on line below ill just pass it in as a dictionary
+
         stmt = select(Classes.class_date).order_by(Classes.class_date.desc())
-        with engine.begin() as connection:
-            dates = []
+        dates = []
+        with engine.begin() as connection:            
             for row in connection.execute(stmt):
                 dates_dict = {
                     'date': row[0]
                 }
                 dates.append(dates_dict)
             if not dates:
-                    return apology("There are no existing classes")                        
+                    return apology("There are no existing classes")                     
         cDate=[]
         if request.args.get("date") is not None:
             cDate.append ({"date": request.args.get("date")})
         else:
             cDate.append(dates[0])
+#        print (dates)
 
         #get services
         stmt = select(Services).where(Services.service_type == 0).order_by(Services.service)
         with engine.connect()  as connection:
             teacher_services = connection.execute(stmt).fetchall()
-
         stmt = select(Services).where(Services.service_type == 1).order_by(Services.service)
         with engine.connect()  as connection:       
             student_services = connection.execute(stmt).fetchall()
@@ -104,7 +108,6 @@ def class_edit():
             
         #get class_id
         stmt = text("SELECT id from classes WHERE class_date = :date")
-        
         with engine.connect() as connection:
             classID = connection.execute(stmt, cDate).fetchone()
 
@@ -124,10 +127,9 @@ def class_edit():
 
         return render_template("/class_edit.html",  classID=classID, dates=dates, date=cDate, teachers=teachers, students=students, teacher_services=teacher_services, student_services=student_services, classes=classes)
 
-@app.route("/class_update", methods=["POST"])
+@app.route("/update_class_data", methods=["POST"])
 def class_update():
     '''updates the theory and notes for a class'''
-
     #get data from the form
     class_id = request.form.get("class_id")
     class_date = request.form.get("class_date")
@@ -151,8 +153,6 @@ def class_add():
     stmt = select(Classes).where(Classes.class_date == tDate)
     with engine.connect() as connection:
         result = connection.execute(stmt).all()   
-    print("DATE: ", tDate)
-    print("RESULT: ", result)
     if not (result == []):
         return apology("Class already exists for today")
     
@@ -161,7 +161,7 @@ def class_add():
     with engine.begin() as connection:
         connection.execute(stmt)    
 
-    return redirect(f"/class_edit")
+    return redirect(f"/class_edit?date={tDate}")
 
 @app.route("/delete_entry", methods=["POST"])
 def delete_entry():
@@ -169,17 +169,11 @@ def delete_entry():
 
     class_join_id = request.form.get("class_join_id")
     class_date = request.form.get("class_date")
-    print("Class date: ", class_date)
-    print("Join ID:", class_join_id)
-
-    # stmt = text("DELETE FROM class_join WHERE id = :class_join_id")
-    # data = {"class_join_id": class_join_id}
     stmt = delete(Class_join).where(Class_join.id == class_join_id)
     with engine.begin() as connection:
         connection.execute(stmt)
 
     return redirect(f"/class_edit?date={class_date}") 
-    return redirect("/class_edit") 
 
 @app.route("/employees", methods=["GET", "POST"])
 #@login_required
@@ -193,21 +187,15 @@ def employees():
 
         active_status = '0'
     else:
+        ''' toggles inactive on or off'''
         active_status = request.form.get("active_status")
         if active_status == "1":
             stmt = select(Employees).where(Employees.active == active_status).order_by(Employees.active.desc(), Employees.role, Employees.name)
         else:
             stmt = select(Employees).order_by(Employees.role, Employees.name)
-        results = []
+
         with engine.connect() as connection:
-            for row in connection.execute(stmt):
-                result_dict = {
-                    'id': row[0],
-                    'name': row[1],
-                    'role': row[2],
-                    'active': row[3]
-                }
-                results.append(result_dict)
+            results = connection.execute(stmt).fetchall()   
 
     return render_template("./employees.html", results=results, active=active_status)
    
