@@ -99,10 +99,10 @@ def class_edit():
             student_services = connection.execute(stmt).fetchall()
 
         #get teachers and students
-        stmt = select(Employees).where(Employees.role == 0).order_by(Employees.name)
+        stmt = select(Employees).where(Employees.role == 0, Employees.active == 1).order_by(Employees.name)
         with engine.connect() as connection:
             teachers = connection.execute(stmt).fetchall()
-        stmt = select(Employees).where(Employees.role == 1).order_by(Employees.name)
+        stmt = select(Employees).where(Employees.role == 1, Employees.active == 1).order_by(Employees.name)
         with engine.connect() as connection:
             students = connection.execute(stmt).fetchall()
             
