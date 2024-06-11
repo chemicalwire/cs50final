@@ -40,8 +40,8 @@
         Select Class Date - 
         <select name="date" onchange="this.form.submit()">
             <option value="" selected disabled hidden>{{date[0].date}}</option>
-            {% for date in dates %}
-            <option value="{{ date.date }}">{{ date.date }}</option>
+            {% for row in dates %}
+            <option value="{{ row.date }}">{{ row.date }}</option>
             {% endfor %}
         </select>
         </select>
@@ -55,7 +55,6 @@
     <form method="post" action="/class_edit">
         <input type="hidden" name="class_date" value="{{date[0].date}}">
         <input type="hidden" name="class_id" value="{{classID.id}}">
-
         <select name="employee" id="employeeDropdown" required>
             <option value="" selected disabled hidden>Select Teacher</option>
             {% for teacher in teachers %}
@@ -106,8 +105,6 @@
                 </td>
                 <td><input type="button" name="delete{{class.class_join_id}}" id="{{class.class_join_id}}" value="Delete" onclick="deleteClassEntry({{class.class_join_id}}, '{{date[0].date}}')"></td>
             </tr>
-            </tr>
-            </tr>
             {% endfor %}
         </table>
         <hr>
@@ -134,7 +131,6 @@
                         <input type="submit" name="update" value="Update" style="border-radius: 10%; background-color: lightblue; border: none;">
                     </td>
                 </tr>
-            </table>
             </table>
         </form>
 {% else %}

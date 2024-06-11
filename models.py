@@ -55,6 +55,12 @@ class Class_join(Base):
     # def __repr__(self):
     #     return f"{{'id': {self.id}, 'class_id': {self.class_id}, 'employee_id': {self.employee_id}, 'service_id': {self.service_id}}}"
 
+class Users(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True, init=False)   
+    username: Mapped[str]
+    password_hash: Mapped[str]
 
 engine = create_engine("sqlite:///attendance.db")
 Base.metadata.create_all(bind=engine)

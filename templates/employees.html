@@ -67,20 +67,67 @@
     <div>
         
     {% if results %}        
-        <form method="post" action="/edit_employee">
-        <table  style="text-align: left;">
-            <tr style="text-decoration: underline; font-weight: bold;">
-                <td>
-                    Name
-                </td>
-                <td>
-                    Role
-                </td>
-                <td>
-                    Active
-                </td>
-            </tr>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <table style="border:2px solid darkgrey; font-weight: bold;">
+
+                            <tr>
+                                <td>Teachers</td>
+                            </tr>
+                        </table>
+                    <form method="post" action="/edit_employee">
+                    <table>
+                        
+                    {% for result in results %}
+                    {% if result.role == 0 %}
+                    <tr>
+                        <td>
+                            {{ result.name }}
+                        </td>
+                        <td>
+                            <input type="checkbox" name="edit" onclick="changeActiveStatus(this, {{result.id}})" value="1" {% if result.active %} checked {% endif %}>        
+                        </td>
+                    </tr> 
+                    {%endif%}
+                    {% endfor %}
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table style="border:2px solid darkgrey; font-weight: bold;">
+                        <tr>
+                            <td>Students</td>
+                        </tr>
+                    </table>
+                    <table>
+                        
+                        {% for result in results %}
+                        {% if result.role == 1 %}
+                        <tr>
+                            <td>
+                                {{ result.name }}
+                            </td>
+                            <td>
+                                <input type="checkbox" name="edit" onclick="changeActiveStatus(this, {{result.id}})" value="1" {% if result.active %} checked {% endif %}>            
+                            </td>
+                        </tr> 
+                        {%endif%}
+                        {% endfor %}
+                        </table>
+                </div>
+            </div>
+        </form>
+    
+    {% else %}
+        <p>No employees found</p>
+    {% endif %}     
+    </div>
+
+    <!-- <div class="row">
+        <div class="col-md-6">
+            <table>
             {% for result in results %}
+            {% if result.role == 0 %}
             <tr>
                 <td>
                     {{ result.name }}
@@ -97,13 +144,33 @@
 
                 </td>
             </tr> 
+            {%endif%}
             {% endfor %}
-        </table>
-        </form>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table>
+                {% for result in results %}
+                {% if result.role == 0 %}
+                <tr>
+                    <td>
+                        {{ result.name }}
+                    </td>
+                    <td name="employee" id="{{result.id}}"> 
+                        {% if result.role == 1 %}
+                            Teacher
+                        {% else %}
+                            Student
+                        {% endif %}
+                    </td>
+                    <td>
+                        <input type="checkbox" name="edit" onclick="changeActiveStatus(this, {{result.id}})" value="1" {% if result.active %} checked {% endif %}>
     
-    {% else %}
-        <p>No employees found</p>
-    {% endif %}     
-    </div>
-
+                    </td>
+                </tr> 
+                {%endif%}
+                {% endfor %}
+                </table>
+        </div>
+    </div> -->
 {% endblock %}

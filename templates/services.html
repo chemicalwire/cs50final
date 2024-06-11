@@ -28,39 +28,46 @@
     
     <div>
         {% if results %}    
-        <table style="text-align: left;" name="services">
             <form method="post" action="/edit_service">
-            {% for result in results %}
-                <tr id={{result.id}} name="service_row">
-                    <td>
-                        {{ result.service }}
-                        <!-- <div class="radio-group">
-                            <input type="radio" id={{result.id}} name="service_id" value={{result.id}}>
-                            <label for = {{result.id}}>{{ result.service }}</label>
-                        </div> -->
-                    </td>
-                    <td>{% if result.service_type == 0 %}
-                        Teacher
-                    {% else %}
-                        Student
-                    {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-                <!-- <tr>
-                    <td>
-
-                    </td>
-                    <td>
-                        <button name="delete" style="visibility: hidden">Delete</button>
-                        <button name="make_inactive">Make Inactive</button>   
-                    </td>
-                </tr> -->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table style="text-align: left;" name="services">
+                                <form method="post" action="/edit_service">
+                                {% for result in results %}
+                                    {% if result.service_type == 0 %}
+                                    <tr id={{result.id}} name="service_row">
+                                        <td>
+                                            {{ result.service }}
+                                        </td>
+             
+                                    </tr>
+                                    {%endif%}
+                                    {% endfor %}
+                                </form>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table style="text-align: left;" name="services">
+                                <form method="post" action="/edit_service">
+                                {% for result in results %}
+                                    {% if result.service_type == 1 %}
+                                    <tr id={{result.id}} name="service_row">
+                                        <td>
+                                            {{ result.service }}
+                                        </td>
+             
+                                    </tr>
+                                    {%endif%}
+                                    {% endfor %}
+                                </form>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </form>
-        </table>
         {% else %}
             <h3>No services found</h3>
         {% endif %}
     </div>
-
 {% endblock %}

@@ -17,6 +17,13 @@ with engine.begin() as connection:
     if not dates:
             print("No dates found")   
 print("#######")
+
+formatted_dates = [date_tuple['date'].strftime('%Y-%m-%d') for date_tuple in dates]
+
+for row in formatted_dates:
+    print(row)
+
+print("#######")
 with engine.begin() as connection:
     results = connection.execute(stmt) 
 
