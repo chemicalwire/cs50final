@@ -56,7 +56,7 @@ def class_edit():
         service = request.form.get("services")
         class_id = request.form.get("class_id")
       
-        print(date, employee, service, class_id)
+        print(date, employees, service, class_id)
         stmt = insert(Class_join).values(class_id = class_id, employee_id = teacher, service_id = service)  
         with engine.begin() as connection:
             connection.execute(stmt)
@@ -147,7 +147,7 @@ def class_add():
 
     #get todat's date
     today = date.today()
-    tDate = today.strftime("%Y-%m-%d")
+    tDate = today
 
     #check to see if a class already exists for today
     stmt = select(Classes).where(Classes.class_date == tDate)
