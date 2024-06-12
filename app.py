@@ -1,6 +1,7 @@
-# from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import text, select, update, insert, delete
+import sqlalchemy.exc
 from flask import Flask, flash, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -53,8 +54,9 @@ def class_edit():
         teacher = request.form.get("employee")   
         service = request.form.get("services")
 
-        if service not in ["0", "1"] or not teacher:
-            return apology("Please stop editing the html, asshole")  
+        # print(service, teacher)
+        if not teacher:
+             return apology("Please stop editing the html, asshole")  
               
         # print(date, employees, service, class_id)
         stmt = insert(Class_join).values(class_id = class_id, employee_id = teacher, service_id = service)  
@@ -90,7 +92,7 @@ def class_edit():
 
         ########################################
         # I hate all the code above this line, but im having trouble getting the date formatted correctly
-        # I do not understand why the above code  works.
+        # I do not understand why the above code works.
         # ######################################    
         
         # this is the way to go, but i need to figure out how to incorporate it
@@ -245,7 +247,7 @@ def add_employee():
         if role not in ["0", "1"]:
             return apology("Please select a valid role")
         
-        #check to make sure the employee doesn't already exist
+        #check to make sure employee with the same name doesn't already exist
         stmt = text("SELECT * from employees WHERE name = :name")
         data = {"name": name}
         with engine.connect() as connection:
