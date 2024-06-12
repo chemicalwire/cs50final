@@ -30,7 +30,9 @@ with engine.begin() as connection:
 print(results)        
 for row in results:
     print(row)
-       
+
+for x, y in enumerate(dates):
+    print(x, y['date'])
 # cDate=[]
 # if request.args.get("date") is not None:
 #     cDate.append ({"date": request.args.get("date")})
