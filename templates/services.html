@@ -14,7 +14,7 @@
     <h1 style="text-align: left;">Services</h1>
     <div name="add_service"> 
         <form method="post" action="/add_service">
-            Add Service - Name: <input id="service_name" name="service_name" type="text" required>
+            Add Service - Name: <input id="service_name" name="service_name" type="text" required autocomplete="off" autofocus>
             Type: 
             <select id="type" name="type" required>
                 <option value="" selected disabled hidden>Select type</option>
@@ -32,6 +32,11 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-6">
+                            <table style="border:2px solid darkgrey; font-weight: bold;">
+                                <tr>
+                                    <td>Teacher Roles </td>
+                                </tr>
+                            </table>
                             <table style="text-align: left;" name="services">
                                 <form method="post" action="/edit_service">
                                 {% for result in results %}
@@ -48,6 +53,12 @@
                             </table>
                         </div>
                         <div class="col-md-6">
+                            <table style="border:2px solid darkgrey; font-weight: bold;">
+
+                                <tr>
+                                    <td>Services</td>
+                                </tr>
+                            </table>
                             <table style="text-align: left;" name="services">
                                 <form method="post" action="/edit_service">
                                 {% for result in results %}

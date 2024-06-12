@@ -48,6 +48,7 @@ def class_edit():
     ''' Class edit page. Allows user to add students to a class, update theory and notes, and delete students from a class.'''
 
     if request.method == "POST":
+        ''' insert new class participant and then return to the get of this page'''
         #get the data from the form
         date = request.form.get("class_date")
         class_id = request.form.get("class_id")
@@ -70,32 +71,23 @@ def class_edit():
     else:
 
         ############################################
-        # return dates as a tuple
-        # make cDate a string file and then on line below ill just pass it in as a dictionary
-        # I hate this code
+        # the following code bugs me, but it works
         ############################################
         stmt = select(Classes.class_date).order_by(Classes.class_date.desc())
         dates = []
         with engine.begin() as connection:            
             for row in connection.execute(stmt):
-                dates_dict = {
-                    'date': row[0]
-                }
-                dates.append(dates_dict)
-            if not dates:
-                    return apology("There are no existing classes")                     
+                dates.append({'date': row[0]}) 
+        if not dates:
+            return apology("There are no existing classes")                     
         cDate=[]
         if request.args.get("date") is not None:
             cDate.append ({"date": request.args.get("date")})
         else:
             cDate.append(dates[0])
 
-        ########################################
-        # I hate all the code above this line, but im having trouble getting the date formatted correctly
-        # I do not understand why the above code works.
-        # ######################################    
         
-        # this is the way to go, but i need to figure out how to incorporate it
+        # this is the way to go maybe?, but i need to figure out how to incorporate it
         # formatted_dates = [date_tuple['date'].strftime('%Y-%m-%d') for date_tuple in dates]
         # print(formatted_dates)
 
@@ -157,7 +149,7 @@ def class_update():
 @app.route("/class_add", methods=["GET"])
 @login_required
 def class_add():
-    '''Adds a new class for the current date, if one already exist, redirect to class_edit'''
+    '''Adds a new class for the current date, if one already exist, yell at the user'''
     #get today's date
     today = date.today()
     tDate = today

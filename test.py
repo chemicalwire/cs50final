@@ -31,8 +31,15 @@ print(results)
 for row in results:
     print(row)
 
-for x, y in enumerate(dates):
-    print(x, y['date'])
+stmt = select(Classes.class_date).order_by(Classes.class_date.desc())
+
+with engine.begin() as connection:            
+    for x in connection.execute(stmt):
+        print(x[0])
+
+# for x, y in enumerate(dates):
+#     print(x, y['date'])
+    
 # cDate=[]
 # if request.args.get("date") is not None:
 #     cDate.append ({"date": request.args.get("date")})
